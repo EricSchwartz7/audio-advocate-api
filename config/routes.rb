@@ -6,6 +6,8 @@ Rails.application.routes.draw do
       get 'active', to: 'users#active'
       post 'login', to: 'users#login'
       resources :users
+      resources :products
+      get 'ratings', to: 'products#get_avg_ratings'
     end
   end
 end
