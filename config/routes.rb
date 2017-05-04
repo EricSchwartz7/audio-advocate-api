@@ -6,8 +6,12 @@ Rails.application.routes.draw do
       get 'active', to: 'users#active'
       post 'login', to: 'users#login'
       resources :users
-      resources :products
-      get 'ratings', to: 'products#get_avg_ratings'
+      get 'products', to: 'products#index'
+      get 'ratings', to: 'products#avg_ratings'
+      get 'reviews/:id', to: 'products#reviews'
+      get 'product/:id', to: 'products#show'
+      get 'products/price', to: 'products#sort_price'
+      get 'products/price_high', to: 'products#sort_price_high'
     end
   end
 end
