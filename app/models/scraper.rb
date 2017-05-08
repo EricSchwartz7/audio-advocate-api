@@ -18,7 +18,7 @@ class Scraper
     array << "https://media.sweetwater.com/images/dynamic/#{product_name}/original-300.jpg"
     # gets price in dollars and cents, then combines them as an integer
     price = page.css(".product-price--final dollars").first.text + page.css(".product-price--final cents").first.text
-    array << price.gsub('.', '')
+    array << price.gsub(/[.,]/, '')
   end
 
   def self.make_product(product_name)
