@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       get 'product/:id', to: 'products#show'
       get 'products/price', to: 'products#sort_price'
       get 'products/price_high', to: 'products#sort_price_high'
+      get 'products/rating', to: 'products#sort_rating'
     end
   end
 end

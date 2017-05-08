@@ -33,13 +33,16 @@ module Api::V1
       render json: products
     end
 
-    # def sort_rating
-    #   ratings = Product.all.map do |product|
-    #     {(product.avg_rating) => [product.id, product.reviews.length]}
-    #   end
-    #   products = Product.order()
-    #   render json: products
-    # end
+    def sort_rating
+      products = Product.all.sort_by do |product|
+        if product.avg_rating.is_a?(Float)
+          product.avg_rating
+        else
+          0
+        end
+      end
+      render json: products.reverse
+    end
 
   end
 end
