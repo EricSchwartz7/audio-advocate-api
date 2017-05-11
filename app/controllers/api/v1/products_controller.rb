@@ -35,11 +35,8 @@ module Api::V1
 
     def sort_rating
       products = Product.all.sort_by do |product|
-        if product.avg_rating.is_a?(Float)
-          product.avg_rating
-        else
-          0
-        end
+        [product.avg_rating.is_a?(Float) ? product.avg_rating : 0,
+          product.reviews.length]
       end
       render json: products.reverse
     end
