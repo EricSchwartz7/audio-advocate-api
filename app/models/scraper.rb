@@ -88,4 +88,24 @@ class Scraper
     end
   end
 
+  def self.get_guitarcenter_reviews(keywords)
+    base_url = "http://www.guitarcenter.com/search?typeAheadSuggestion=true&typeAheadRedirect=true&Ntt="
+    search_terms = keywords.gsub(" ", "+")
+    search_page = Nokogiri::HTML(open(base_url + search_terms))
+    product_url = search_page.css('.product a')[0].attr('href')
+    product_page = Nokogiri::HTML(open("http://guitarcenter.com" + product_url))
+    product_page.css('.pr-review-wrap').each do |review|
+        rev = Review.new
+        rev.subject = review.css(".pr-review-rating-headline").text
+        rev.content = review.css(".pr-comments").text
+        rev.author = review.css(".pr-review-author-name span").text
+        rev.rating = review.css(".pr-rating").text
+        product = Product.where("name LIKE :keywords", keywords: "%#{keywords.split(' ').slice(1..3).join(' ')}%")
+        binding.pry
+        rev.product_id = product.id
+        rev.origin = "Guitar Center"
+        rev.save
+    end
+  end
+
 end
