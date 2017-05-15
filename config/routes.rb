@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       get 'products/price', to: 'products#sort_price'
       get 'products/price_high', to: 'products#sort_price_high'
       get 'products/rating', to: 'products#sort_rating'
+      get 'amazon/:id', to: 'products#amazon'
     end
   end
 end

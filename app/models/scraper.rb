@@ -8,6 +8,14 @@ class Scraper
 
   @base_url = "https://www.sweetwater.com/store/detail/"
 
+  def self.amazon_rating(url)
+    page = Nokogiri::HTML(open(url))
+    # binding.pry
+    array = []
+    array << page.css('.crIFrameNumCustReviews').children.css('img').attr('alt').text
+    array << page.css('.crIFrameNumCustReviews').children.css('a')[1].text
+  end
+
   def self.get_sweetwater_product(product_name)
     # gets the page
     page = Nokogiri::HTML(open(@base_url + product_name))

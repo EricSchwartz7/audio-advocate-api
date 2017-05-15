@@ -41,5 +41,14 @@ module Api::V1
       render json: products.reverse
     end
 
+    def amazon
+      # binding.pry
+      product = Product.find(params[:id])
+      name = product.name.split.slice(0..2).join(" ")
+      brand = product.brand
+      title_url = Amazon.search("#{brand} #{name}")
+      render json: title_url
+    end
+
   end
 end

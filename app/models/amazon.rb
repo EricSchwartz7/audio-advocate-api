@@ -2,7 +2,7 @@ require 'vacuum'
 
 class Amazon
 
-  def self.search
+  def self.search(keywords)
     request = Vacuum.new
 
     request.configure(
@@ -13,14 +13,29 @@ class Amazon
 
     response = request.item_search(
       query: {
-        'Keywords' => 'Architecture',
-        'SearchIndex' => 'Books'
+        'Keywords' => keywords,
+        'SearchIndex' => 'MusicalInstruments',
+        'ResponseGroup' => 'ItemAttributes,Reviews'
       }
     )
 
+    # Pluck the URL to the Reviews page
+    items = response.parse['ItemSearchResponse']['Items']
+    if items["TotalResults"] == "0"
+      ["Not found on Amazon"]
+    elsif items["TotalResults"] == "1"
+      url = items['Item']['CustomerReviews']['IFrameURL']
+      title = items['Item']['ItemAttributes']['Title']
+      [title, url]
+    else
+      url = items['Item'][0]['CustomerReviews']['IFrameURL']
+      title = items['Item'][0]['ItemAttributes']['Title']
+      [title, url]
+    end
+    # puts url
+    # Scrape the average rating and number of ratings from the reviews page
+    # Scraper.amazon_rating(url)
 
-  puts response.to_h
-  binding.pry
   end
 
 
