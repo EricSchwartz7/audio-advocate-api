@@ -20,6 +20,11 @@ module Api::V1
 
     def reviews
       reviews = Product.find(params[:id]).reviews
+      if reviews.length == 0
+        rev = Review.new
+        rev.subject = "This product has not yet been reviewed."
+        reviews = [rev]
+      end
       render json: reviews
     end
 
@@ -39,6 +44,18 @@ module Api::V1
           product.reviews.length]
       end
       render json: products.reverse
+    end
+
+    def sort_num_reviews
+      products = Product.all.sort_by do |product|
+        product.reviews.length
+      end
+      render json: products.reverse
+    end
+
+    def filter_connection
+      products = Product.where(category: params[:connection])
+      render json: products
     end
 
     def amazon
