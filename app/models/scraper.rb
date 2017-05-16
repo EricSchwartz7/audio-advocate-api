@@ -88,23 +88,42 @@ class Scraper
     end
   end
 
-  def self.get_guitarcenter_reviews(keywords)
+  def self.search_gc(keywords)
     base_url = "http://www.guitarcenter.com/search?typeAheadSuggestion=true&typeAheadRedirect=true&Ntt="
     search_terms = keywords.gsub(" ", "+")
-    search_page = Nokogiri::HTML(open(base_url + search_terms))
-    product_url = search_page.css('.product a')[0].attr('href')
-    product_page = Nokogiri::HTML(open("http://guitarcenter.com" + product_url))
-    product_page.css('.pr-review-wrap').each do |review|
+    page = Nokogiri::HTML(open(base_url + search_terms))
+    if page.css('.product').length > 0
+      product_url = page.css('.product a')[0].attr('href')
+      puts product_url
+      page = Nokogiri::HTML(open("http://guitarcenter.com" + product_url))
+    end
+    page
+  end
+
+  def self.get_gc_reviews(keywords, product_id)
+    product_page = search_gc(keywords)
+    binding.pry
+    if product_page.css('.pr-review-wrap').length > 0
+      product_page.css('.pr-review-wrap').each do |review|
         rev = Review.new
         rev.subject = review.css(".pr-review-rating-headline").text
         rev.content = review.css(".pr-comments").text
         rev.author = review.css(".pr-review-author-name span").text
         rev.rating = review.css(".pr-rating").text
-        product = Product.where("name LIKE :keywords", keywords: "%#{keywords.split(' ').slice(1..3).join(' ')}%")
-        binding.pry
-        rev.product_id = product.id
+        # product = Product.where("name LIKE :keywords", keywords: "%#{keywords.split(' ').slice(1..3).join(' ')}%")
+        rev.product_id = product_id
         rev.origin = "Guitar Center"
         rev.save
+      end
+    else
+      puts "No reviews"
+    end
+  end
+
+  def self.get_all_gc_reviews
+    Product.all.each do |product|
+      name = product.name.split.slice(0..3).join(" ")
+      get_gc_reviews(name, product.id)
     end
   end
 
