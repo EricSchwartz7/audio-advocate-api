@@ -1,6 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
-require 'pry'
+# require 'pry'
 
 # For later: Use the Amazon Product Advertising API to get Amazon reviews
 
@@ -102,7 +102,6 @@ class Scraper
 
   def self.get_gc_reviews(keywords, product_id)
     product_page = search_gc(keywords)
-    binding.pry
     if product_page.css('.pr-review-wrap').length > 0
       product_page.css('.pr-review-wrap').each do |review|
         rev = Review.new
